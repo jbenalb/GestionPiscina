@@ -50,10 +50,7 @@ Route::get('/perfil', function () {
 
 Route::get('/reservas', [ReservasController::class, 'index'])->name('reservas.index');
 
-// Esta ruta solo va a tener permiso para acceder el administrador (Es una prueba)
-Route::middleware('role:' . \App\Enums\Role::ADMIN)->get('/pagos-administrador', function () {
-    return 123;
-})->name('pagos-administrador');
+
 
 // Ruta para la creacion y eliminacion de citas
 Route::middleware('auth')->group(function () {

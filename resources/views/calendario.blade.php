@@ -83,7 +83,7 @@
 
       // Definir la constante
       const MAX_CONFLICTING_EVENTS = 2;
-     
+
       fetch('/citas')
         .then(response => response.json())
         .then(data => {
@@ -168,18 +168,26 @@
                     var title = result.value;
                     var startTime = roundTime(info.date, 60);
                     var endTime = new Date(startTime.getTime() + 55 * 60 * 1000);
-                    //Horario domingo
+
+                    // Validar que la cita no sea en el pasado
+                    var now = new Date();
+                    if (startTime < now) {
+                      Swal.fire('No se pueden programar citas en horarios pasados.');
+                      return;
+                    }
+
+                    // Validar horarios de domingo y sábado
                     if (info.date.getDay() === 0) {
                       Swal.fire('No se pueden programar citas los domingos.');
                       return;
                     }
-                    //Horario sabado
                     var hour = startTime.getUTCHours();
                     if (info.date.getDay() === 6 && hour >= 14) {
                       Swal.fire('No se pueden programar citas después de las 2 p.m. los sábados.');
                       return;
                     }
-                    //Horario de apertura
+
+                    // Validar horarios de apertura
                     if (hour < 9 || hour >= 22) {
                       Swal.fire('No se pueden programar citas antes de las 9 a.m. o después de las 10 p.m.');
                       return;
@@ -199,13 +207,12 @@
                       var eventHour = eventStartTime.getHours();
                       conflictingHourCounts[eventHour] = (conflictingHourCounts[eventHour] || 0) + 1;
                     });
-                    //Limitar las citas por carril
-                    var hour = startTime.getUTCHours();
+
                     if (conflictingHourCounts[hour] >= MAX_CONFLICTING_EVENTS) {
                       Swal.fire('Conflicto', 'Ya existen dos citas en ese horario y carril.', 'error');
                       return;
                     }
-                    //Crear la cita
+
                     var newEvent = {
                       title: title,
                       start: startTime.toISOString(),
@@ -216,7 +223,7 @@
                         date: info.date.toISOString().split('T')[0]
                       }
                     };
-                    //Crear la cita
+
                     fetch('/citas', {
                       method: 'POST',
                       headers: {

@@ -28,7 +28,7 @@ class CitaController extends Controller
     public function index()
     {
         $citas = Cita::all();
-        Log::info('Citas obtenidas:', $citas->toArray()); // Agregar este registro de mensajes
+        Log::info('Citas obtenidas:', $citas->toArray()); 
 
         return response()->json($citas);
     }
